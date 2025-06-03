@@ -17,8 +17,8 @@ def register (request):
     context={'form':form}
     return render(request,'app1/register.html',context)
 def loginPage (request):
-    if request.user.is_authenticated:
-        return redirect('home')
+    # if request.user.is_authenticated:
+    #     return redirect('home')
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -29,3 +29,6 @@ def loginPage (request):
         else: messages.info(request,'user or password not correct!')
     context={}
     return render(request,'app1/login.html',context)
+def logoutPage(request):
+    logout(request)
+    return redirect('login')
