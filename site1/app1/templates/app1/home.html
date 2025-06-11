@@ -1,12 +1,92 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register & Login</title>
+    <link rel="stylesheet" href="{% static 'app1/css/index-1.css' %}">
 </head>
 <body>
+    <header>
+        <h2 class="logo">Drowsiness Detector</h2>
+        <nav class="navigation">
+            <a href="{% url 'home'%}">Home</a>
+            <a href="{% url 'change_password'%}">Settings</a>
+            <a href="{% url 'logout'%}">Log out</a>
+        </nav>
+    </header>
 
-<h1>This is home page</h1>
-<div class="form-inline my-2 my-lg-0">
-	<span><a href = "{% url 'logout'%}">Logout</a></span>
-</div>
+    <section class="hero fade-in">
+        <div class="hero-text">
+            <h1>ANTI-DROWSINESS APPLICATION</h1>
+            <p>Stay alert and focused with our<br>anti-drowsiness app.</p>
+            <a href="#" class="btn" id="getStartedBtn">Get Started</a>
+        </div>
+    </section>
+
+    <main class="content">
+        <section>
+            <h1>Welcome to the Drowsiness Detector</h1>
+
+            <div id="cameraContainer" style="display: none; margin-top: 30px;">
+                <h2>Live Camera</h2>
+                <button id="stopCameraBtn" style="margin-top: 10px; padding: 8px 16px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Turn Off Camera
+                </button>
+                <video id="camera"
+                       width="640"
+                       height="480"
+                       autoplay
+                       playsinline
+                       style="border: 3px solid #999; border-radius: 10px; transform: scaleX(-1);">
+                </video>
+            </div>
+
+            <div style="height: 1500px;"></div>
+        </section>
+    </main>
+
+    <script>
+        let cameraStream = null; // Store stream globally
+
+        document.getElementById('getStartedBtn').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            document.querySelector('.content').scrollIntoView({ behavior: 'smooth' });
+
+            const cameraContainer = document.getElementById('cameraContainer');
+            const video = document.getElementById('camera');
+
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                        cameraStream = stream; // Store the stream so we can stop it later
+                        cameraContainer.style.display = 'block';
+                    })
+                    .catch(function (err) {
+                        console.error("Error accessing camera: " + err);
+                        alert('Unable to access the camera. Please ensure you have granted permissions.');
+                    });
+            } else {
+                alert('Camera API not supported in this browser.');
+            }
+        });
+
+        // Handle "Turn Off Camera"
+        document.getElementById('stopCameraBtn').addEventListener('click', function () {
+            if (cameraStream) {
+                // Stop all tracks
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+
+            // Hide the container
+            document.getElementById('cameraContainer').style.display = 'none';
+        });
+    </script>
+
 </body>
 </html>
